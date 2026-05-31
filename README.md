@@ -3,7 +3,7 @@
 A futuristic, animated student learning dashboard built with Next.js, Supabase, Tailwind CSS, and Framer Motion.
 
 ## 🔗 Live Demo
-[Deployed on Vercel](#) ← update this link after deployment
+[https://learning-dashboard1-sand.vercel.app](https://learning-dashboard1-sand.vercel.app)
 
 ## 🛠️ Tech Stack
 - **Framework**: Next.js 16 (App Router)
@@ -12,23 +12,35 @@ A futuristic, animated student learning dashboard built with Next.js, Supabase, 
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
 
-## 📐 Architecture
+## 🏗️ Architectural Choices
 
-### Server/Client Component Split
-- `CoursesGrid.tsx` — Server Component that fetches courses from Supabase
-- `CourseTile.tsx` — Client Component for animations and interactivity
-- `Sidebar.tsx` — Client Component for navigation state
-- `HeroTile.tsx` — Client Component for Framer Motion animations
-- `ActivityTile.tsx` — Client Component for the activity graph
+### Why App Router?
+Next.js App Router allows mixing Server and Client components in the same tree, giving fine-grained control over what runs on the server vs the browser.
 
-### Data Fetching
-Courses are fetched using Next.js Server Components with the Supabase JS client. Suspense boundaries show skeleton loaders while data is loading.
+### Why Supabase?
+Supabase provides a free PostgreSQL database with a simple JavaScript client, making it easy to fetch data securely from Server Components without exposing credentials.
 
-### Animations
-- Staggered entrance animations using Framer Motion
-- Spring physics on card hover (stiffness: 300, damping: 20)
-- Progress bars animate from 0% to actual value on load
-- Sidebar uses `layoutId` for smooth navigation highlight
+### Why Framer Motion?
+Framer Motion provides spring physics animations that run on the GPU using transform and opacity only — avoiding layout shifts and repaints.
+
+## 🔀 Server vs Client Component Split
+
+This is the core architectural decision of the project:
+
+| Component | Type | Reason |
+|---|---|---|
+| `page.tsx` | Server | Root layout, no interactivity needed |
+| `CoursesGrid.tsx` | **Server** | Fetches data from Supabase securely on the server |
+| `CourseTile.tsx` | **Client** | Needs Framer Motion animations and useEffect |
+| `HeroTile.tsx` | **Client** | Needs Framer Motion entrance animations |
+| `ActivityTile.tsx` | **Client** | Needs useMemo and Framer Motion |
+| `Sidebar.tsx` | **Client** | Needs useState for collapse/active state |
+| `SkeletonTile.tsx` | Server | Pure UI, no interactivity |
+
+### Key Strategy
+- **Data fetching happens on the server** (`CoursesGrid.tsx`) using Supabase JS client — this keeps API keys secure and improves performance
+- **Animations and interactivity happen on the client** — only components that need `useState`, `useEffect`, or Framer Motion are marked `'use client'`
+- **Suspense boundary** wraps `CoursesGrid` to show skeleton loaders while server data loads
 
 ## 🗄️ Database Schema
 ```sql
@@ -59,10 +71,10 @@ CREATE TABLE courses (
 
 ## 🔐 Environment Variables
 See `.env.example` for required variables:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon public key
 
 ## 📱 Responsive Design
 - **Desktop (>1024px)**: Full sidebar + 3 column bento grid
 - **Tablet (768-1024px)**: 2 column grid
-- **Mobile (<768px)**: Hamburger menu + single column
+- **Mobile (<768px)**: Hamburger menu + single column layout
