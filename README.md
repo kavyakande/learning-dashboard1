@@ -1,80 +1,54 @@
-# 🚀 Next-Gen Learning Dashboard
+# Next-Gen Student Learning Dashboard
 
-A futuristic, animated student learning dashboard built with Next.js, Supabase, Tailwind CSS, and Framer Motion.
+A futuristic, highly animated, dark-mode-only education platform prototype. Built as part of a frontend engineering challenge to showcase server-rendered data fetching, smooth hardware-accelerated animations, and zero layout shifts.
 
-## 🔗 Live Demo
-[https://learning-dashboard1-sand.vercel.app](https://learning-dashboard1-sand.vercel.app)
+## 🚀 Live Links
+- **Live Application:** [learning-dashboard1-sand.vercel.app](https://learning-dashboard1-sand.vercel.app)
+- **GitHub Repository:** [github.com/kavyakande/learning-dashboard1](https://github.com/kavyakande/learning-dashboard1)
 
-## 🛠️ Tech Stack
-- **Framework**: Next.js 16 (App Router)
-- **Database**: Supabase (PostgreSQL)
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
+---
 
-## 🏗️ Architectural Choices
+## 🛠️ Tech Stack & Constraints
+- **Framework:** Next.js (App Router)
+- **Database/BaaS:** Supabase (PostgreSQL)
+- **Styling:** Tailwind CSS
+- **Animations:** Framer Motion (Strict requirement)
+- **Icons:** Lucide React
 
-### Why App Router?
-Next.js App Router allows mixing Server and Client components in the same tree, giving fine-grained control over what runs on the server vs the browser.
+---
 
-### Why Supabase?
-Supabase provides a free PostgreSQL database with a simple JavaScript client, making it easy to fetch data securely from Server Components without exposing credentials.
+## 📐 Architectural Choices & Component Split
 
-### Why Framer Motion?
-Framer Motion provides spring physics animations that run on the GPU using transform and opacity only — avoiding layout shifts and repaints.
+To maximize performance, ensure a buttery-smooth user experience, and prevent Cumulative Layout Shift (CLS), the architecture relies on a strict separation between server-rendered data and client-side interactivity.
 
-## 🔀 Server vs Client Component Split
+### 1. Server Components (RSC)
+* **Data Fetching:** Course records are fetched securely on the server directly from the Supabase PostgreSQL database using the `@supabase/supabase-js` client library. This eliminates client-side API waterfalls and protects database credentials.
+* **Streaming & Hydration:** Utilizes React `<Suspense>` boundaries paired with custom, pulsing skeleton loading components (`loading.tsx`) to handle async data-fetching phases gracefully without blocking page layout renders or causing layout shifts.
 
-This is the core architectural decision of the project:
+### 2. Client Components (`"use client"`)
+* **Animations:** Interactive individual UI elements—such as the Bento Grid tiles, animated progress tracks, and the sidebar wrapper—are marked as Client Components to utilize Framer Motion's hardware-accelerated properties.
+* **Micro-interactions:** Sidebar menu items leverage Framer Motion's shared `layoutId` attribute to snap highlights seamlessly into place when links change state.
 
-| Component | Type | Reason |
-|---|---|---|
-| `page.tsx` | Server | Root layout, no interactivity needed |
-| `CoursesGrid.tsx` | **Server** | Fetches data from Supabase securely on the server |
-| `CourseTile.tsx` | **Client** | Needs Framer Motion animations and useEffect |
-| `HeroTile.tsx` | **Client** | Needs Framer Motion entrance animations |
-| `ActivityTile.tsx` | **Client** | Needs useMemo and Framer Motion |
-| `Sidebar.tsx` | **Client** | Needs useState for collapse/active state |
-| `SkeletonTile.tsx` | Server | Pure UI, no interactivity |
+---
 
-### Key Strategy
-- **Data fetching happens on the server** (`CoursesGrid.tsx`) using Supabase JS client — this keeps API keys secure and improves performance
-- **Animations and interactivity happen on the client** — only components that need `useState`, `useEffect`, or Framer Motion are marked `'use client'`
-- **Suspense boundary** wraps `CoursesGrid` to show skeleton loaders while server data loads
+## ⚡ Performance & Animation Implementation
+* **Zero Layout Shifts:** All entrance cascades and card hover scales exclusively animate `transform` and `opacity` properties, keeping browser repaints and document layout reflows at zero.
+* **Spring Physics:** Smooth interactive feedback loops are engineered using spring configurations (`stiffness: 300, damping: 20`) for a natural, premium feel.
+* **Staggered Orchestration:** Grid layouts use Framer Motion variant propagation to cascade elements upward sequentially on mount.
 
-## 🗄️ Database Schema
-```sql
-CREATE TABLE courses (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  title text NOT NULL,
-  progress integer NOT NULL,
-  icon_name text NOT NULL,
-  created_at timestamptz DEFAULT now()
-);
-```
+---
 
-## 🚀 Getting Started
+## 📱 Responsive Layout Breakdown
+* **Desktop (> 1024px):** Displays the full Bento grid alongside the open sidebar.
+* **Tablet (768px - 1024px):** The sidebar collapses seamlessly to icons only, and the Bento grid shifts to a clean 2-column layout.
+* **Mobile (< 768px):** The sidebar drops to a responsive bottom navigation/hamburger layout, and the Bento grid gracefully stacks into a single, vertical scrolling column.
 
-1. Clone the repository
-2. Install dependencies:
-```bash
-   npm install
-```
-3. Copy `.env.example` to `.env.local` and fill in your Supabase credentials:
-```bash
-   cp .env.example .env.local
-```
-4. Run the development server:
-```bash
-   npm run dev
-```
+---
 
-## 🔐 Environment Variables
-See `.env.example` for required variables:
-- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon public key
+## 🔧 Environment Setup
 
-## 📱 Responsive Design
-- **Desktop (>1024px)**: Full sidebar + 3 column bento grid
-- **Tablet (768-1024px)**: 2 column grid
-- **Mobile (<768px)**: Hamburger menu + single column layout
+Create a `.env.local` file in your root folder and add your credentials:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_public_key
