@@ -3,16 +3,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, BookOpen, BarChart2, Settings, ChevronLeft, Menu, X } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
-  { icon: BookOpen, label: 'Courses', id: 'courses' },
-  { icon: BarChart2, label: 'Progress', id: 'progress' },
-  { icon: Settings, label: 'Settings', id: 'settings' },
+  { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard', href: '/' },
+  { icon: BookOpen, label: 'Courses', id: 'courses', href: '/courses' },
+  { icon: BarChart2, label: 'Progress', id: 'progress', href: '/progress' },
+  { icon: Settings, label: 'Settings', id: 'settings', href: '/settings' },
 ];
 
 export default function Sidebar() {
-  const [active, setActive] = useState('dashboard');
+  const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -36,20 +38,21 @@ export default function Sidebar() {
             className="lg:hidden fixed top-12 left-0 right-0 z-40 bg-[#0d0d14] border-b border-white/5 p-4 space-y-1"
           >
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => { setActive(item.id); setMobileOpen(false); }}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
                 className="relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/50 hover:text-white transition-colors"
               >
-                {active === item.id && (
+                {pathname === item.href && (
                   <motion.div
                     layoutId="activeNavMobile"
                     className="absolute inset-0 bg-violet-500/10 rounded-xl border border-violet-500/20"
                   />
                 )}
-                <item.icon className={`w-5 h-5 relative z-10 ${active === item.id ? 'text-violet-400' : ''}`} />
-                <span className={`relative z-10 ${active === item.id ? 'text-white' : ''}`}>{item.label}</span>
-              </button>
+                <item.icon className={`w-5 h-5 relative z-10 ${pathname === item.href ? 'text-violet-400' : ''}`} />
+                <span className={`relative z-10 ${pathname === item.href ? 'text-white' : ''}`}>{item.label}</span>
+              </Link>
             ))}
           </motion.div>
         )}
@@ -72,31 +75,31 @@ export default function Sidebar() {
 
         <div className="mt-8 space-y-1">
           {navItems.map((item) => (
-            <button
+            <Link
               key={item.id}
-              onClick={() => setActive(item.id)}
+              href={item.href}
               className="relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/50 hover:text-white transition-colors"
             >
-              {active === item.id && (
+              {pathname === item.href && (
                 <motion.div
                   layoutId="activeNav"
                   className="absolute inset-0 bg-violet-500/10 rounded-xl border border-violet-500/20"
                 />
               )}
-              <item.icon className={`w-5 h-5 relative z-10 shrink-0 ${active === item.id ? 'text-violet-400' : ''}`} />
+              <item.icon className={`w-5 h-5 relative z-10 shrink-0 ${pathname === item.href ? 'text-violet-400' : ''}`} />
               <AnimatePresence>
                 {!collapsed && (
                   <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className={`relative z-10 whitespace-nowrap ${active === item.id ? 'text-white' : ''}`}
+                    className={`relative z-10 whitespace-nowrap ${pathname === item.href ? 'text-white' : ''}`}
                   >
                     {item.label}
                   </motion.span>
                 )}
               </AnimatePresence>
-            </button>
+            </Link>
           ))}
         </div>
       </motion.nav>
