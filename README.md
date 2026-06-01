@@ -1,54 +1,128 @@
 # Next-Gen Student Learning Dashboard
 
-A futuristic, highly animated, dark-mode-only education platform prototype. Built as part of a frontend engineering challenge to showcase server-rendered data fetching, smooth hardware-accelerated animations, and zero layout shifts.
+A student learning dashboard built using Next.js, Supabase, Tailwind CSS, and Framer Motion. This project was created as part of a frontend engineering challenge focused on server-side data fetching, responsive design, and smooth user interactions.
 
-## 🚀 Live Links
-- **Live Application:** [learning-dashboard1-sand.vercel.app](https://learning-dashboard1-sand.vercel.app)
-- **GitHub Repository:** [github.com/kavyakande/learning-dashboard1](https://github.com/kavyakande/learning-dashboard1)
+## Live Links
 
----
-
-## 🛠️ Tech Stack & Constraints
-- **Framework:** Next.js (App Router)
-- **Database/BaaS:** Supabase (PostgreSQL)
-- **Styling:** Tailwind CSS
-- **Animations:** Framer Motion (Strict requirement)
-- **Icons:** Lucide React
+* Live Application: https://learning-dashboard1-sand.vercel.app
+* GitHub Repository: https://github.com/kavyakande/learning-dashboard1
 
 ---
 
-## 📐 Architectural Choices & Component Split
+## Tech Stack
 
-To maximize performance, ensure a buttery-smooth user experience, and prevent Cumulative Layout Shift (CLS), the architecture relies on a strict separation between server-rendered data and client-side interactivity.
-
-### 1. Server Components (RSC)
-* **Data Fetching:** Course records are fetched securely on the server directly from the Supabase PostgreSQL database using the `@supabase/supabase-js` client library. This eliminates client-side API waterfalls and protects database credentials.
-* **Streaming & Hydration:** Utilizes React `<Suspense>` boundaries paired with custom, pulsing skeleton loading components (`loading.tsx`) to handle async data-fetching phases gracefully without blocking page layout renders or causing layout shifts.
-
-### 2. Client Components (`"use client"`)
-* **Animations:** Interactive individual UI elements—such as the Bento Grid tiles, animated progress tracks, and the sidebar wrapper—are marked as Client Components to utilize Framer Motion's hardware-accelerated properties.
-* **Micro-interactions:** Sidebar menu items leverage Framer Motion's shared `layoutId` attribute to snap highlights seamlessly into place when links change state.
+* Next.js (App Router)
+* TypeScript
+* Tailwind CSS
+* Supabase
+* Framer Motion
+* Lucide React Icons
 
 ---
 
-## ⚡ Performance & Animation Implementation
-* **Zero Layout Shifts:** All entrance cascades and card hover scales exclusively animate `transform` and `opacity` properties, keeping browser repaints and document layout reflows at zero.
-* **Spring Physics:** Smooth interactive feedback loops are engineered using spring configurations (`stiffness: 300, damping: 20`) for a natural, premium feel.
-* **Staggered Orchestration:** Grid layouts use Framer Motion variant propagation to cascade elements upward sequentially on mount.
+## Project Overview
+
+The dashboard follows a Bento Grid layout and includes:
+
+* A collapsible sidebar navigation
+* A hero section with a welcome message and learning streak
+* Dynamic course cards fetched from Supabase
+* An activity chart section
+* Responsive layouts for desktop, tablet, and mobile devices
+
+The application uses a dark theme throughout the interface.
 
 ---
 
-## 📱 Responsive Layout Breakdown
-* **Desktop (> 1024px):** Displays the full Bento grid alongside the open sidebar.
-* **Tablet (768px - 1024px):** The sidebar collapses seamlessly to icons only, and the Bento grid shifts to a clean 2-column layout.
-* **Mobile (< 768px):** The sidebar drops to a responsive bottom navigation/hamburger layout, and the Bento grid gracefully stacks into a single, vertical scrolling column.
+## Architecture
+
+### Server Components
+
+Course data is fetched from Supabase using Next.js Server Components. Fetching data on the server helps improve performance and keeps database access separate from client-side UI logic.
+
+### Client Components
+
+Components that require animations or user interactions are implemented as Client Components. Framer Motion is used for page transitions, card hover effects, sidebar interactions, and animated progress bars.
+
+### Loading States
+
+A loading skeleton is displayed while course data is being fetched. This provides visual feedback to users and helps maintain a consistent layout during loading.
+
+### Error Handling
+
+Basic error handling is included to display a fallback message if course data cannot be loaded from Supabase.
 
 ---
 
-## 🔧 Environment Setup
+## Animation Features
 
-Create a `.env.local` file in your root folder and add your credentials:
+* Staggered card animations when the dashboard loads
+* Hover effects using Framer Motion spring animations
+* Animated course progress bars
+* Smooth sidebar navigation interactions
+* Transform and opacity-based animations to reduce layout shifts
+
+---
+
+## Responsive Design
+
+### Desktop (>1024px)
+
+* Full sidebar is visible
+* Complete Bento Grid layout
+
+### Tablet (768px - 1024px)
+
+* Sidebar collapses to icons
+* Grid adjusts to a two-column layout
+
+### Mobile (<768px)
+
+* Navigation switches to a mobile-friendly layout
+* Dashboard content stacks into a single column
+
+---
+
+## Environment Variables
+
+Create a `.env.local` file in the project root and add:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_public_key
+```
+
+---
+
+## Running the Project
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+---
+
+## Notes
+
+This project was built to demonstrate:
+
+* Server-side data fetching with Next.js
+* Integration with Supabase
+* Reusable component architecture
+* Responsive UI development
+* Framer Motion animations
+* TypeScript-based development
